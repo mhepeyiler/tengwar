@@ -6,7 +6,7 @@
 using namespace tengwar;
 
 
-std::unique_ptr<fe::Expression> fe::Lexer::process_next_token() {
+std::unique_ptr<fe::Token> fe::Lexer::process_next_token() {
     if (!file_.is_opened() || file_.get_char() == EOF) {
         // @todo: Log error
         return nullptr;
@@ -16,80 +16,80 @@ std::unique_ptr<fe::Expression> fe::Lexer::process_next_token() {
         file_.advance();
     }
 
-    std::unique_ptr<fe::Expression> ret;
+    std::unique_ptr<fe::Token> ret;
     if (char c = file_.get_char(); c == '{') {
-        ret = std::make_unique<fe::ExecutionExpression>(fe::ExpressionType::kOpenBrace);
+        ret = std::make_unique<fe::ExecutionToken>(fe::TokenType::kOpenBrace);
     } else if (c == '}') {
-        ret = std::make_unique<fe::ExecutionExpression>(fe::ExpressionType::kCloseBrace);
+        ret = std::make_unique<fe::ExecutionToken>(fe::TokenType::kCloseBrace);
     } else if (c == '(') {
-        ret = std::make_unique<fe::ExecutionExpression>(fe::ExpressionType::kOpenParenthesis);
+        ret = std::make_unique<fe::ExecutionToken>(fe::TokenType::kOpenParenthesis);
     } else if (c == ')') {
-        ret = std::make_unique<fe::ExecutionExpression>(fe::ExpressionType::kCloseParenthesis);
+        ret = std::make_unique<fe::ExecutionToken>(fe::TokenType::kCloseParenthesis);
     } else if (c == ';') {
-        ret = std::make_unique<fe::ExecutionExpression>(fe::ExpressionType::kSemicolon);
+        ret = std::make_unique<fe::ExecutionToken>(fe::TokenType::kSemicolon);
     } else if (c == '-') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kMinus);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kMinus);
     } else if (c == '~') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kBitwise);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kBitwise);
     } else if (c == '+') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kAddition);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kAddition);
     } else if (c == '*') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kMultiplication);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kMultiplication);
     } else if (c == '/') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kDivision);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kDivision);
     } else if (c == ':') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kColon);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kColon);
     } else if (c == '?') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kQuestionMark);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kQuestionMark);
     } else if (c == ',') {
-        ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kComma);
+        ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kComma);
     } else if (c == '&') {
         file_.advance();
         if (file_.get_char() == '&') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kAND);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kAND);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kBitwiseAND);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kBitwiseAND);
         }
     } else if (c == '|') {
         file_.advance();
         if (file_.get_char() == '|') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kOR);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kOR);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kBitwiseOR);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kBitwiseOR);
         }
     } else if (c == '<') {
         file_.advance();
         if (file_.get_char() == '=') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kSmallerEquality);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kSmallerEquality);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kSmaller);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kSmaller);
         }
     } else if (c == '>') {
         file_.advance();
         if (file_.get_char() == '=') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kGreaterEquality);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kGreaterEquality);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kGreater);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kGreater);
         }
     } else if (c == '!') {
         file_.advance();
         if (file_.get_char() == '=') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kNotEquality);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kNotEquality);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kLogicalNegation);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kLogicalNegation);
         }
     } else if (c == '=') {
         file_.advance();
         if (file_.get_char() == '=') {
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kEquality);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kEquality);
         } else {
             file_.reverse();
-            ret = std::make_unique<fe::OperatorExpression>(fe::ExpressionType::kOperator, fe::OperatorType::kAssign);
+            ret = std::make_unique<fe::OperatorToken>(fe::TokenType::kOperator, fe::OperatorType::kAssign);
         }
     } else if (std::isalpha(static_cast<unsigned char>(c))) {
         ret = alpha_lexer(); 
@@ -103,7 +103,7 @@ std::unique_ptr<fe::Expression> fe::Lexer::process_next_token() {
     return ret;
 }
 
-std::unique_ptr<fe::Expression> fe::Lexer::alpha_lexer() {
+std::unique_ptr<fe::Token> fe::Lexer::alpha_lexer() {
     static std::set<std::string> keyword_set{"int", "return", "if", "else", "for", "while", "do", "break", "continue"};
     std::string alpha;
     
@@ -116,13 +116,13 @@ std::unique_ptr<fe::Expression> fe::Lexer::alpha_lexer() {
     }
 
     if (keyword_set.contains(alpha)) {
-        return std::make_unique<fe::KeywordExpression>(fe::ExpressionType::kKeyword, std::move(alpha));
+        return std::make_unique<fe::KeywordToken>(fe::TokenType::kKeyword, std::move(alpha));
     }
 
-    return std::make_unique<fe::IdentifierExpression>(fe::ExpressionType::kIdentifier, std::move(alpha));
+    return std::make_unique<fe::IdentifierToken>(fe::TokenType::kIdentifier, std::move(alpha));
 }
 
-std::unique_ptr<fe::Expression> fe::Lexer::numeric_lexer() {
+std::unique_ptr<fe::Token> fe::Lexer::numeric_lexer() {
     std::string numeric;
 
     char c = file_.get_char();
@@ -133,6 +133,6 @@ std::unique_ptr<fe::Expression> fe::Lexer::numeric_lexer() {
         c = file_.get_char();
     }
 
-    return std::make_unique<fe::IntegerExpression>(fe::ExpressionType::kIntegralLiteral, numeric);
+    return std::make_unique<fe::IntegerToken>(fe::TokenType::kIntegralLiteral, numeric);
 }
 

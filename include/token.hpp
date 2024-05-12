@@ -1,12 +1,12 @@
-#ifndef TENGWAR_INCLUDE_EXPRESSION_HPP_
-#define TENGWAR_INCLUDE_EXPRESSION_HPP_
+#ifndef TENGWAR_INCLUDE_Token_HPP_
+#define TENGWAR_INCLUDE_Token_HPP_
 
 #include <string>
 
 namespace tengwar::fe
 {
     
-enum class ExpressionType {
+enum class TokenType {
     kNone,
     kOpenBrace,
     kCloseBrace,
@@ -42,27 +42,27 @@ enum class OperatorType {
     kComma,
 };
 
-class Expression {
+class Token {
 public:
-    Expression() = default;
-    Expression(ExpressionType type) : type_{type} {}
-    virtual ~Expression() = default;
-    virtual ExpressionType get_type() const {
+    Token() = default;
+    Token(TokenType type) : type_{type} {}
+    virtual ~Token() = default;
+    virtual TokenType get_type() const {
         return type_;
     }
 protected:
-    ExpressionType type_;
+    TokenType type_;
 };
 
-class ExecutionExpression : public Expression {
+class ExecutionToken : public Token {
 public:
-    using Expression::Expression;
+    using Token::Token;
 };
 
-class KeywordExpression : public Expression {
+class KeywordToken : public Token {
 public:
-    using Expression::Expression;
-    KeywordExpression(ExpressionType type, std::string keyword) : Expression{type}, keyword_{keyword} {} 
+    using Token::Token;
+    KeywordToken(TokenType type, std::string keyword) : Token{type}, keyword_{keyword} {} 
     
     std::string get_keyword() && {
         return keyword_;
@@ -76,10 +76,10 @@ private:
     std::string keyword_;
 };
 
-class IdentifierExpression : public Expression {
+class IdentifierToken : public Token {
 public:
-    using Expression::Expression;
-    IdentifierExpression(ExpressionType type, std::string identifier) : Expression{type}, identifier_{identifier} {} 
+    using Token::Token;
+    IdentifierToken(TokenType type, std::string identifier) : Token{type}, identifier_{identifier} {} 
     
     std::string get_identifier() && {
         return identifier_;
@@ -94,10 +94,10 @@ private:
     
 };
 
-class IntegerExpression : public Expression {
+class IntegerToken : public Token {
 public:
-    using Expression::Expression;
-    IntegerExpression(ExpressionType type, std::string integer) : Expression{type}, integer_{integer} {} 
+    using Token::Token;
+    IntegerToken(TokenType type, std::string integer) : Token{type}, integer_{integer} {} 
     
     std::string get_integer() && {
         return integer_;
@@ -111,10 +111,10 @@ private:
     std::string integer_;
 };
 
-class OperatorExpression : public Expression {
+class OperatorToken : public Token {
 public:
-    using Expression::Expression;
-    OperatorExpression(ExpressionType type, OperatorType op_type) : Expression{type}, op_type_{op_type} {}
+    using Token::Token;
+    OperatorToken(TokenType type, OperatorType op_type) : Token{type}, op_type_{op_type} {}
 
     OperatorType get_operator_type() const {
         return op_type_;

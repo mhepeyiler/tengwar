@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "freader.hpp"
-#include "expression.hpp"
+#include "token.hpp"
 
 namespace tengwar::fe {
 
@@ -18,13 +18,13 @@ public:
     void set_file(fs::FReader file) { file_ = std::move(file); }
     void set_file(std::string_view filepath) { set_file(fs::FReader{filepath}); }
 
-    std::unique_ptr<fe::Expression> process_next_token();
+    std::unique_ptr<fe::Token> process_next_token();
 
 private:
     fs::FReader file_;
 
-    std::unique_ptr<fe::Expression> numeric_lexer();
-    std::unique_ptr<fe::Expression> alpha_lexer();
+    std::unique_ptr<fe::Token> numeric_lexer();
+    std::unique_ptr<fe::Token> alpha_lexer();
 
 };
 
